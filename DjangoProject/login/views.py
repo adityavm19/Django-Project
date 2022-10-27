@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from django.urls import reverse
 from .renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import generics
 from .models import User
 
 
@@ -19,19 +20,21 @@ def get_tokens_for_user(user):
     }
 
 # Create your views here.
-class UserRegistrationView(APIView):
-    renderer_classes = [UserRenderer]
-    def post(self,request , format=None):
-        serializer = UserRegistrationSerializer(data=request.data)
+class UserRegistrationView(generics.GenericAPIView):
+    #renderer_classes = [UserRenderer]
+    serializer_class = UserRegistrationSerializer
+    def post(self,request):
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
             token = get_tokens_for_user(user)
-            return Response({'msg': 'Registration Successful', 'token':token}, status=status.HTTP_201_CREATED)
+            return Response({'msg': 'Registration Successful',"User": serializer.data, 'token':token}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class UserLoginView(APIView):
-    renderer_classes = [UserRenderer]
-    def post(self,request , format=None):
+    #renderer_classes = [UserRenderer]
+    serializer_class = UserLoginSerializer
+    def post(self,request):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             email = serializer.data.get('email')
