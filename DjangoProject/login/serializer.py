@@ -3,6 +3,7 @@ from .models import User
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
+    password = serializers.CharField(style={'input_type':'password'}, write_only=True)
     accType = serializers.CharField(max_length=20)
     first_name = serializers.CharField(max_length=200)
     last_name = serializers.CharField(max_length=200)
@@ -27,6 +28,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 class UserLoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255)
+    password = serializers.CharField(style={'input_type':'password'}, write_only=True)
     class Meta:
         model = User
         fields = ['email','password']
