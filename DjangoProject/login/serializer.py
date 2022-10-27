@@ -3,9 +3,10 @@ from .models import User
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type':'password'}, write_only=True)
+    accType  = serializers.CharField(max_length=20)
     class Meta:
         model = User
-        fields = ['email', 'name', 'password', 'password2']
+        fields = ['email', 'name','mobile','accType', 'password', 'password2']
         extra_kwargs = {
             'password':{'write_only': True}
         }

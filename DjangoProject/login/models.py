@@ -5,7 +5,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 # Create your models here.
 class UserManager(BaseUserManager):
-    def create_user(self, email, name, password=None, password2=None):
+    def create_user(self, email, name, mobile, accType, password=None, password2=None):
         """ 
         Creates and saves a User with the given email, date of
         birth and password.
@@ -16,13 +16,15 @@ class UserManager(BaseUserManager):
         user = self.model(
             email=self.normalize_email(email),
             name=name,
+            mobile=mobile,
+            accType=accType
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, name, password=None):
+    def create_superuser(self, email, name, mobile, accType, password=None):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
@@ -31,6 +33,8 @@ class UserManager(BaseUserManager):
             email,
             password=password,
             name=name,
+            mobile=mobile,
+            accType=accType
         )
         user.is_admin = True
         user.save(using=self._db)
@@ -43,7 +47,14 @@ class User(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
+
+
+    accType = models.CharField(
+        max_length=20
+    )
     name = models.CharField(max_length=200)
+    mobile = models.IntegerField(default=None)
+    # accType = models.CharField(max_length=200,choices=ACCOUNT_CHOICES, default=None)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -52,7 +63,7 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = ['name', 'mobile', 'accType']
 
     def __str__(self):
         return self.email
